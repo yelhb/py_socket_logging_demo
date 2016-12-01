@@ -18,8 +18,21 @@ Python 的logging模块是线程安全的，同一个进程的不同线程网同
 BUT，这个方法不支持日志按时间切割文件...
 
 ## 方案2
-就如文档中所说，所有logger使用SocketHandler，单独起一个进程来接受这些日志并写到日志文件中。
+修改TimedRotatingFileHandler中的逻辑缺陷，或者重写FileHandler类，见参考2
+
+## 方案3
+就如文档中所说，所有logger使用SocketHandler，单独起一个进程来接受这些日志并写到日志文件中。此代码要实现的。
+
+### 基本结构
+- main
+    - processor_1(sender_1) 
+    - processor_2(sender_2)
+    - processor_3(sender_3)
+    - processor_4(receiver)
+
+主进程生成4个子进程，其中3个子进程同时向processor_4发送日志，processor_4负责将日志写到文件并按时切割文件
 
 ## 参考
 - 1. [Logging Cookbook](https://docs.python.org/2/howto/logging-cookbook.html)
 - 2. [python logging日志模块以及多进程日志](http://www.jianshu.com/p/d615bf01e37b)
+- 3. [Sending and receiving logging events across a network](https://docs.python.org/2/howto/logging-cookbook.html#sending-and-receiving-logging-events-across-a-network)
